@@ -1,3 +1,5 @@
+let context = {};
+
 document.addEventListener('DOMContentLoaded', () => {
     const the_form = document.querySelector('#the-form');
     const input_title = document.querySelector('#title');
@@ -5,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const button = document.querySelector('#submit');
     const clear_button = document.querySelector('#clear');
     const export_button = document.querySelector('#export');
+    const openall_button = document.querySelector('#open-all');
+    const closeall_button = document.querySelector('#close-all');
     const the_list = document.querySelector('#the-list');
 
     if (the_form == null) { console.error("Error: the_form is null!"); }
@@ -15,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (export_button == null) { console.error("Error: clear_button is null!"); }
     if (the_list == null) { console.error("Error: the_list is null!"); }
 
-    const context = {
+    context = {
         the_form: the_form,
         input_title: input_title,
         input_details: input_details,
@@ -23,64 +27,66 @@ document.addEventListener('DOMContentLoaded', () => {
         persistent_array: []
     };
 
-    if (!(localStorage.persistent_array == null)) {
-        try {
-            context.persistent_array = JSON.parse(localStorage.persistent_array);
-            build_out_array(context);
-        } catch (error) {
-            context.persistent_array = [];
-        }
-    }
-    else {
-        context.persistent_array = [];
-    }
+    persistence_setup_array();
+    build_out_array();
 
-    button.addEventListener('click', click(context));
-    clear_button.addEventListener('click', clear(context));
-    export_button.addEventListener('click', exportIt(context));
+    button.addEventListener('click', click);
+    clear_button.addEventListener('click', clear);
+    export_button.addEventListener('click', export_it);
+    openall_button.addEventListener('click', open_all);
+    closeall_button.addEventListener('click', close_all);
 });
 
-function build_out_array(context) {
+function build_out_array() {
     for (let obj of context.persistent_array) {
-        const elt = objectToHTMLElement(obj);
-        context.the_list.prepend(elt);
+        context.the_list.prepend(objectToHTMLElement(obj));
     }
 }
 
-function click(context) {
-    return function (event) {
-        event.preventDefault();
-        const title = context.input_title.value;
-        const details = context.input_details.value;
-        context.the_form.reset();
+/////// Button code
 
-        const obj = {
-            title: title,
-            details: details,
-            date: new Date()
-        };
-        //console.dir(obj);
-        const elt = objectToHTMLElement(obj);
+function click(event) {
+    event.preventDefault();
 
-        context.persistent_array.push(obj);
-        localStorage.persistent_array = JSON.stringify(context.persistent_array);
+    const title = context.input_title.value;
+    const details = context.input_details.value;
+    context.the_form.reset();
 
-        context.the_list.prepend(elt);
-    }
+    const obj = {
+        id: context.persistent_array.length,
+        title: title,
+        details: details,
+        date: new Date()
+    };
+    //console.dir(obj);
+
+    context.persistent_array.push(obj);
+    persistence_save();
+
+    const elt = objectToHTMLElement(obj);
+    context.the_list.prepend(elt);
 }
 
-function clear(context) {
-    return function (event) {
-        context.the_list.innerHTML = null;
-        localStorage.removeItem('persistent_array');
-    }
+function clear(event) {
+    context.the_list.innerHTML = null;
+    persistence_clear();
 }
 
-function exportIt(context) {
-    return function (event) {
-        downloadObjectAsJson(context.persistent_array, "my-list");
-    }
+function export_it(event) {
+    downloadObjectAsJson(context.persistent_array, "my-list");
 }
+
+function open_all(event) {
+    const buttons = document.querySelectorAll('button.collapsible.inactive');
+    buttons.forEach(button => button.click());
+}
+
+function close_all(event) {
+    const buttons = document.querySelectorAll('button.collapsible.active');
+    buttons.forEach(button => button.click());
+}
+
+///////////////
 
 // https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser
 function downloadObjectAsJson(exportObj, exportName) {
@@ -107,23 +113,53 @@ function makeElt(tag, clss, text, parent) {
 
 function objectToHTMLElement(obj) {
     const li_elt = makeElt('li');
+    li_elt.setAttribute('id', "li_" + obj.id);
     const div_elt = makeElt('div', 'item', null, li_elt);
     const button_elt = makeElt('button', 'collapsible', obj.title, div_elt);
+    button_elt.classList.add('inactive');
     const content_elt = makeElt('div', 'content', null, div_elt);
     const details_elt = makeElt('p', null, obj.details, content_elt);
 
-    const context = {
+    const toggle_context = {
         content: content_elt
     };
-    button_elt.addEventListener('click', toggle_collapse(context));
+    button_elt.addEventListener('click', toggle_collapse(toggle_context));
+
+    const delete_button_elt = makeDeleteButton(obj.id, context.the_list, li_elt);
+    content_elt.appendChild(delete_button_elt);
 
     return li_elt;
+}
+
+function makeDeleteButton(id, parent, child) {
+    // <input class="button" type="button" id="export" value="Export">
+    const button_elt = makeElt("input", "button");
+    button_elt.setAttribute('type', 'button');
+    button_elt.setAttribute('value', 'Delete');
+    const context = {
+        id: id,
+        parent: parent,
+        child: child
+    };
+    button_elt.addEventListener('click', delete_item(context));
+    return button_elt;
+}
+
+function delete_item(context) {
+    return function () {
+        // delete by id from the array
+        persistence_delete_by_id(context.id);
+
+        // delete the HTML element too
+        context.parent.removeChild(context.child);
+    }
 }
 
 // https://www.w3schools.com/howto/howto_js_collapsible.asp
 function toggle_collapse(context) {
     return function (event) {
         this.classList.toggle("active");
+        this.classList.toggle("inactive");
         var content = this.nextElementSibling;
         if (content.style.maxHeight) {
             content.style.maxHeight = null;
@@ -132,3 +168,31 @@ function toggle_collapse(context) {
         }
     }
 }
+
+
+// persistence of the list
+
+function persistence_setup_array() {
+    context.persistent_array = [];
+    if (localStorage.persistent_array !== null) {
+        try {
+            context.persistent_array = JSON.parse(localStorage.persistent_array);
+        }
+        catch (error) { }
+    }
+}
+
+function persistence_save() {
+    localStorage.persistent_array = JSON.stringify(context.persistent_array);
+}
+
+function persistence_clear() {
+    context.persistent_array = [];
+    localStorage.removeItem('persistent_array');
+}
+
+function persistence_delete_by_id(id) {
+    context.persistent_array = context.persistent_array.filter(obj => obj.id !== id);
+    persistence_save();
+}
+

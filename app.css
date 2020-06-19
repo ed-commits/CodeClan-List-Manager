@@ -1,6 +1,5 @@
 body {
     background-color: #FFDAB9;
-    font-size: 20px;
     color: #653E7A;
     font: 1.2em "Fira Sans", sans-serif;
 }
@@ -13,14 +12,18 @@ input, textarea {
     background-color: #EBB5E0;
     border: 2px solid #653E7A;
     font: 1.2em "Fira Sans", sans-serif;
-    font-size: 24px;
 }
 
 input.button {
     background-color: #EBB5E0;
     border: 2px solid #653E7A;
     border-radius: 12px;
-    padding: 8px;
+    padding: 4px 40px;
+}
+
+input.button:hover {
+    background-color: #008CBA;
+    color: white;
 }
 
 /* GRID form from S.O. */
@@ -36,10 +39,12 @@ div.form {
 
 div.container {
     border-radius: 10px;
-    border: 2px solid #AB83D2;
+    border: 4px solid #6e4099;
     padding 2em;
     margin: 2em;
     background-color: #EEC4E8;
+    /* https://www.cssmatic.com/box-shadow */
+    box-shadow: 12px 12px 30px 0px rgb(106, 120, 131);
 }
 
 div.button-spacing {
@@ -59,7 +64,7 @@ div.form label:after {
 .item {
     margin: 2em;
     border: 2px solid #D09CED;
-    padding: 5px;
+    padding: 15px;
 }
 
 li {
@@ -77,8 +82,10 @@ li {
     border-radius: 12px;
     text-align: left;
     outline: none;
-    font-size: 20px;
     width: 320px;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    font: 1.2em "Fira Sans", sans-serif;
 }
 
 .active, .collapsible:hover {
@@ -90,5 +97,5 @@ li {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
-    /*    background-color: #EBB5E0; */
+    font: 1.2em "Fira Sans", sans-serif;
 }
