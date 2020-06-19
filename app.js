@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const input_details = document.querySelector('#details');
     const button = document.querySelector('#submit');
     const clear_button = document.querySelector('#clear');
+    const export_button = document.querySelector('#export');
     const the_list = document.querySelector('#the-list');
 
     if(the_form == null) { console.error("Error: the_form is null!"); }
@@ -11,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(input_details == null) { console.error("Error: input_details is null!"); }
     if(button == null) { console.error("Error: button is null!"); }
     if(clear_button == null) { console.error("Error: clear_button is null!"); }
+    if(export_button == null) { console.error("Error: clear_button is null!"); }
     if(the_list == null) { console.error("Error: the_list is null!"); }
 
     const context = {
@@ -35,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     button.addEventListener('click', click(context));
     clear_button.addEventListener('click', clear(context));
+    export_button.addEventListener('click', exportIt(context));
 });
 
 function build_out_array(context) {
@@ -72,6 +75,23 @@ function clear(context) {
         localStorage.removeItem('persistent_array');
     }
 }
+
+function exportIt(context) {
+    return function(event) {
+        downloadObjectAsJson(context.persistent_array, "my-list");
+    }
+}
+
+// https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser
+function downloadObjectAsJson(exportObj, exportName){
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     dataStr);
+    downloadAnchorNode.setAttribute("download", exportName + ".json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  }
 
 function makeElt(tag, clss, text, parent) {
     const elt = document.createElement(tag);

@@ -1,31 +1,87 @@
-div.form {
+body {
+    background-color: #FFDAB9;
+    font-size: 20px;
+    color: #653E7A;
+    font: 1.2em "Fira Sans", sans-serif;
+}
+
+h1 {
+    text-align: center;
+}
+
+input, textarea {
+    background-color: #EBB5E0;
+    border: 2px solid #653E7A;
+    font: 1.2em "Fira Sans", sans-serif;
+        font-size: 24px;
+}
+
+input.button {
+    background-color: #EBB5E0;
+    border: 2px solid #653E7A;
+    border-radius: 12px;
+    padding: 8px;
+}
+
+
+/* GRID form from S.O. */
+
+form {
+}
+
+    div.form {
     display:grid;
     grid-template-columns: max-content max-content;
     grid-gap:5px;
+    margin: 2em;
 }
 
-div.form label       { text-align:right; }
+div.container {
+    border-radius: 10px;
+    border: 2px solid #AB83D2;
+    padding 2em;
+    margin: 2em;
+    background-color: #EEC4E8;
+}
+
+div.button-spacing {
+    padding: 1em;
+}
+
+div.form label       {
+    text-align:right;
+    font-weight: bold;
+    font-size: 18pt;
+}
 div.form label:after { content: ":"; }
 
 .item {
     margin: 2em;
+    border: 2px solid #D09CED;
+    padding: 5px;
 }
 
+li {
+    list-style-type: none;
+}
+
+/* from w3schools */
 
 .collapsible {
-    background-color: #777;
+    background-color: #653E7A;
     color: white;
     cursor: pointer;
-    padding: 18px;
-    width: 100%;
-    border: none;
+    padding: 10px;
+    border: 2px solid #3D205A;
+    border-radius: 12px;
     text-align: left;
     outline: none;
-    font-size: 15px;
+    font-size: 20px;
+    width: 320px;
   }
   
   .active, .collapsible:hover {
-    background-color: #555;
+    background-color: #D09CED;
   }
   
   .content {
@@ -33,6 +89,6 @@ div.form label:after { content: ":"; }
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
-    background-color: #f1f1f1;
+/*    background-color: #EBB5E0; */
   }
   

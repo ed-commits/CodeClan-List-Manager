@@ -9,26 +9,33 @@
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <h1>Hello World!</h1>
-  <p id="welcome-paragraph">Welcome to my JavaScript DOM site</p>
-  <hr/>
-  <form id="the-form" action="#">
-      <div class="form">
+    <div class="container">
+        <h1>List Manager</h1>
+        <center><img src="https://placebear.com/200/80" /></center>
+        </div>
+    <div class="container">
+        <form id="the-form" action="#">
+            <div class="form">
             <label for="title" class="primary">Title</label>
             <input type="text" id="title" required/>
 
             <label for="details">Details</label>
             <textarea id="details" name="details" rows="6" cols="50" required></textarea> 
-
-            <label for="submit">Submit</label>
-            <input type="submit" id="submit" value="submit">
+            <div></div>
+            <input class="button" type="submit" id="submit" value="Submit">
+            </div>
+        </form>
     </div>
-  </form>
-  <hr/>
-  <ul id="the-list">
+  <div class="container">
+    <ul id="the-list">
     <li>This list intentionally left blank</li>
   </ul>
-  <hr />
-  <input type="button" id="clear" value="clear">
+  </div>
+  <div class="container">
+      <div class="button-spacing">
+          <input class="button" type="button" id="clear" value="Clear">
+          <input class="button" type="button" id="export" value="Export">
+       </div>
+  </div>
 </body>
 </html>
