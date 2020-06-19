@@ -13,7 +13,7 @@ input, textarea {
     background-color: #EBB5E0;
     border: 2px solid #653E7A;
     font: 1.2em "Fira Sans", sans-serif;
-        font-size: 24px;
+    font-size: 24px;
 }
 
 input.button {
@@ -23,16 +23,14 @@ input.button {
     padding: 8px;
 }
 
-
 /* GRID form from S.O. */
 
-form {
-}
+form {}
 
-    div.form {
-    display:grid;
+div.form {
+    display: grid;
     grid-template-columns: max-content max-content;
-    grid-gap:5px;
+    grid-gap: 5px;
     margin: 2em;
 }
 
@@ -48,12 +46,15 @@ div.button-spacing {
     padding: 1em;
 }
 
-div.form label       {
-    text-align:right;
+div.form label {
+    text-align: right;
     font-weight: bold;
     font-size: 18pt;
 }
-div.form label:after { content: ":"; }
+
+div.form label:after {
+    content: ":";
+}
 
 .item {
     margin: 2em;
@@ -78,17 +79,16 @@ li {
     outline: none;
     font-size: 20px;
     width: 320px;
-  }
-  
-  .active, .collapsible:hover {
+}
+
+.active, .collapsible:hover {
     background-color: #D09CED;
-  }
-  
-  .content {
+}
+
+.content {
     padding: 0 18px;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
-/*    background-color: #EBB5E0; */
-  }
-  
+    /*    background-color: #EBB5E0; */
+}

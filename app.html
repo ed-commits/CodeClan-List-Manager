@@ -1,41 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>JavaScript in the Browser</title>
-  <script src="app.js"></script>
-  <link rel="stylesheet" href="app.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JavaScript in the Browser</title>
+    <script src="app.js"></script>
+    <link rel="stylesheet" href="app.css">
 </head>
+
 <body>
     <div class="container">
         <h1>List Manager</h1>
         <center><img src="https://placebear.com/200/80" /></center>
-        </div>
+    </div>
     <div class="container">
         <form id="the-form" action="#">
             <div class="form">
-            <label for="title" class="primary">Title</label>
-            <input type="text" id="title" required/>
+                <label for="title" class="primary">Title</label>
+                <input type="text" id="title" required />
 
-            <label for="details">Details</label>
-            <textarea id="details" name="details" rows="6" cols="50" required></textarea> 
-            <div></div>
-            <input class="button" type="submit" id="submit" value="Submit">
+                <label for="details">Details</label>
+                <textarea id="details" name="details" rows="6" cols="50" required></textarea>
+                <div></div>
+                <input class="button" type="submit" id="submit" value="Submit">
             </div>
         </form>
     </div>
-  <div class="container">
-    <ul id="the-list">
-    <li>This list intentionally left blank</li>
-  </ul>
-  </div>
-  <div class="container">
-      <div class="button-spacing">
-          <input class="button" type="button" id="clear" value="Clear">
-          <input class="button" type="button" id="export" value="Export">
-       </div>
-  </div>
+    <div class="container">
+        <ul id="the-list">
+            <li>This list intentionally left blank</li>
+        </ul>
+    </div>
+    <div class="container">
+        <div class="button-spacing">
+            <input class="button" type="button" id="clear" value="Clear">
+            <input class="button" type="button" id="export" value="Export">
+            <hr />
+            <form>
+                <input type="file" id="my-file" name="filename">
+                <input class="button" type="button" id="export" value="Upload">
+            </form>
+        </div>
+    </div>
 </body>
+
 </html>

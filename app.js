@@ -7,13 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const export_button = document.querySelector('#export');
     const the_list = document.querySelector('#the-list');
 
-    if(the_form == null) { console.error("Error: the_form is null!"); }
-    if(input_title == null) { console.error("Error: input_title is null!"); }
-    if(input_details == null) { console.error("Error: input_details is null!"); }
-    if(button == null) { console.error("Error: button is null!"); }
-    if(clear_button == null) { console.error("Error: clear_button is null!"); }
-    if(export_button == null) { console.error("Error: clear_button is null!"); }
-    if(the_list == null) { console.error("Error: the_list is null!"); }
+    if (the_form == null) { console.error("Error: the_form is null!"); }
+    if (input_title == null) { console.error("Error: input_title is null!"); }
+    if (input_details == null) { console.error("Error: input_details is null!"); }
+    if (button == null) { console.error("Error: button is null!"); }
+    if (clear_button == null) { console.error("Error: clear_button is null!"); }
+    if (export_button == null) { console.error("Error: clear_button is null!"); }
+    if (the_list == null) { console.error("Error: the_list is null!"); }
 
     const context = {
         the_form: the_form,
@@ -23,11 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
         persistent_array: []
     };
 
-    if(!(localStorage.persistent_array == null)) {
+    if (!(localStorage.persistent_array == null)) {
         try {
             context.persistent_array = JSON.parse(localStorage.persistent_array);
             build_out_array(context);
-        } catch(error) {
+        } catch (error) {
             context.persistent_array = [];
         }
     }
@@ -41,14 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function build_out_array(context) {
-    for(let obj of context.persistent_array) {
+    for (let obj of context.persistent_array) {
         const elt = objectToHTMLElement(obj);
         context.the_list.prepend(elt);
     }
 }
 
 function click(context) {
-    return function(event) {
+    return function (event) {
         event.preventDefault();
         const title = context.input_title.value;
         const details = context.input_details.value;
@@ -61,7 +61,7 @@ function click(context) {
         };
         //console.dir(obj);
         const elt = objectToHTMLElement(obj);
-        
+
         context.persistent_array.push(obj);
         localStorage.persistent_array = JSON.stringify(context.persistent_array);
 
@@ -70,36 +70,36 @@ function click(context) {
 }
 
 function clear(context) {
-    return function(event) {
+    return function (event) {
         context.the_list.innerHTML = null;
         localStorage.removeItem('persistent_array');
     }
 }
 
 function exportIt(context) {
-    return function(event) {
+    return function (event) {
         downloadObjectAsJson(context.persistent_array, "my-list");
     }
 }
 
 // https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser
-function downloadObjectAsJson(exportObj, exportName){
+function downloadObjectAsJson(exportObj, exportName) {
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
     var downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href",     dataStr);
+    downloadAnchorNode.setAttribute("href", dataStr);
     downloadAnchorNode.setAttribute("download", exportName + ".json");
     document.body.appendChild(downloadAnchorNode); // required for firefox
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
-  }
+}
 
 function makeElt(tag, clss, text, parent) {
     const elt = document.createElement(tag);
-    if(!(clss == null)) {
+    if (!(clss == null)) {
         elt.classList.add(clss);
     }
     elt.textContent = text;
-    if(!(parent == null)) {
+    if (!(parent == null)) {
         parent.appendChild(elt);
     }
     return elt;
@@ -122,13 +122,13 @@ function objectToHTMLElement(obj) {
 
 // https://www.w3schools.com/howto/howto_js_collapsible.asp
 function toggle_collapse(context) {
-    return function(event) {
+    return function (event) {
         this.classList.toggle("active");
         var content = this.nextElementSibling;
-        if (content.style.maxHeight){
-          content.style.maxHeight = null;
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = content.scrollHeight + "px";
+            content.style.maxHeight = content.scrollHeight + "px";
         }
     }
 }
