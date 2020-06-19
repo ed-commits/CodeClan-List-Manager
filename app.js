@@ -17,16 +17,32 @@ document.addEventListener('DOMContentLoaded', () => {
         the_form: the_form,
         input_title: input_title,
         input_details: input_details,
-        the_list: the_list
+        the_list: the_list,
+        persistent_array: []
     };
 
-    if(!(localStorage.persistent_list == null)) {
-        the_list.innerHTML = localStorage.persistent_list;
+    if(!(localStorage.persistent_array == null)) {
+        try {
+            context.persistent_array = JSON.parse(localStorage.persistent_array);
+            build_out_array(context);
+        } catch(error) {
+            context.persistent_array = [];
+        }
+    }
+    else {
+        context.persistent_array = [];
     }
 
     button.addEventListener('click', click(context));
     clear_button.addEventListener('click', clear(context));
 });
+
+function build_out_array(context) {
+    for(let obj of context.persistent_array) {
+        const elt = objectToHTMLElement(obj);
+        context.the_list.prepend(elt);
+    }
+}
 
 function click(context) {
     return function(event) {
@@ -43,15 +59,17 @@ function click(context) {
         //console.dir(obj);
         const elt = objectToHTMLElement(obj);
         
+        context.persistent_array.push(obj);
+        localStorage.persistent_array = JSON.stringify(context.persistent_array);
+
         context.the_list.prepend(elt);
-        localStorage.persistent_list = context.the_list.innerHTML;
     }
 }
 
 function clear(context) {
     return function(event) {
         context.the_list.innerHTML = null;
-        localStorage.persistent_list = context.the_list.innerHTML;
+        localStorage.removeItem('persistent_array');
     }
 }
 
@@ -91,7 +109,6 @@ function toggle_collapse(context) {
           content.style.maxHeight = null;
         } else {
           content.style.maxHeight = content.scrollHeight + "px";
-        } 
-    
+        }
     }
 }
