@@ -3,17 +3,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const input_title = document.querySelector('#title');
     const input_details = document.querySelector('#details');
     const button = document.querySelector('#submit');
+    const the_list = document.querySelector('#the-list');
 
     if(the_form == null) { console.error("Error: the_form is null!"); }
     if(input_title == null) { console.error("Error: input_title is null!"); }
     if(input_details == null) { console.error("Error: input_details is null!"); }
     if(button == null) { console.error("Error: button is null!"); }
+    if(the_list == null) { console.error("Error: the_list is null!"); }
 
     const context = {
         the_form: the_form,
         input_title: input_title,
         input_details: input_details,
-        button: button
+        button: button,
+        the_list: the_list
     };
 
     button.addEventListener('click', click(context));
@@ -26,7 +29,31 @@ function click(context) {
         const details = context.input_details.value;
         context.the_form.reset();
 
-        console.log(title);
-        console.log(details);
+        const obj = {
+            title: title,
+            details: details,
+            date: new Date()
+        };
+        //console.dir(obj);
+        const elt = objectToHTMLElement(obj);
+        
+        context.the_list.prepend(elt);
     }
+}
+
+function makeElt(tag, text, parent) {
+    const elt = document.createElement(tag);
+    elt.textContent = text;
+    if(!(parent == null)) {
+        parent.appendChild(elt);
+    }
+    return elt;
+}
+
+function objectToHTMLElement(obj) {
+    const li_elt = makeElt('li');
+    const div_elt = makeElt('div', null, li_elt);
+    const title_elt = makeElt('h2', obj.title, div_elt);
+    const details_elt = makeElt('p', obj.details, div_elt);
+    return li_elt;
 }
