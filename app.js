@@ -55,8 +55,11 @@ function clear(context) {
     }
 }
 
-function makeElt(tag, text, parent) {
+function makeElt(tag, clss, text, parent) {
     const elt = document.createElement(tag);
+    if(!(clss == null)) {
+        elt.classList.add(clss);
+    }
     elt.textContent = text;
     if(!(parent == null)) {
         parent.appendChild(elt);
@@ -66,8 +69,29 @@ function makeElt(tag, text, parent) {
 
 function objectToHTMLElement(obj) {
     const li_elt = makeElt('li');
-    const div_elt = makeElt('div', null, li_elt);
-    const title_elt = makeElt('h2', obj.title, div_elt);
-    const details_elt = makeElt('p', obj.details, div_elt);
+    const div_elt = makeElt('div', 'item', null, li_elt);
+    const button_elt = makeElt('button', 'collapsible', obj.title, div_elt);
+    const content_elt = makeElt('div', 'content', null, div_elt);
+    const details_elt = makeElt('p', null, obj.details, content_elt);
+
+    const context = {
+        content: content_elt
+    };
+    button_elt.addEventListener('click', toggle_collapse(context));
+
     return li_elt;
+}
+
+// https://www.w3schools.com/howto/howto_js_collapsible.asp
+function toggle_collapse(context) {
+    return function(event) {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        } 
+    
+    }
 }
