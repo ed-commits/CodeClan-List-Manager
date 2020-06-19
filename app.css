@@ -1,0 +1,8 @@
+div.form {
+    display:grid;
+    grid-template-columns: max-content max-content;
+    grid-gap:5px;
+}
+
+div.form label       { text-align:right; }
+div.form label:after { content: ":"; }
