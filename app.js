@@ -99,6 +99,22 @@ function downloadObjectAsJson(exportObj, exportName) {
     downloadAnchorNode.remove();
 }
 
+// https://www.w3schools.com/howto/howto_js_collapsible.asp
+function toggle_collapse(context) {
+    return function (event) {
+        this.classList.toggle("active");
+        this.classList.toggle("inactive");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+        }
+    }
+}
+
+//////////////////////
+
 function makeElt(tag, clss, text, parent) {
     const elt = document.createElement(tag);
     if (!(clss == null)) {
@@ -141,32 +157,17 @@ function makeDeleteButton(id, parent, child) {
         parent: parent,
         child: child
     };
-    button_elt.addEventListener('click', delete_item(context));
-    return button_elt;
-}
 
-function delete_item(context) {
-    return function () {
+    function delete_item() {
         // delete by id from the array
         persistence_delete_by_id(context.id);
 
         // delete the HTML element too
         context.parent.removeChild(context.child);
     }
-}
 
-// https://www.w3schools.com/howto/howto_js_collapsible.asp
-function toggle_collapse(context) {
-    return function (event) {
-        this.classList.toggle("active");
-        this.classList.toggle("inactive");
-        var content = this.nextElementSibling;
-        if (content.style.maxHeight) {
-            content.style.maxHeight = null;
-        } else {
-            content.style.maxHeight = content.scrollHeight + "px";
-        }
-    }
+    button_elt.addEventListener('click', delete_item);
+    return button_elt;
 }
 
 
