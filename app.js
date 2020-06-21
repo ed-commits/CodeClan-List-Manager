@@ -126,15 +126,33 @@ function objectToHTMLElement(obj) {
     const div_elt = makeElt('div', 'item', null, li_elt);
     const button_elt = makeElt('button', 'collapsible', obj.title, div_elt);
     const content_elt = makeElt('div', 'content', null, div_elt);
-    const details_elt = makeElt('pre', null, obj.details, content_elt);
+    const details_elt = makeElt('textarea', 'details', obj.details, content_elt);
+    details_elt.setAttribute('rows', 15);
+    details_elt.setAttribute('cols', 35);
 
     button_elt.classList.add('inactive');
     button_elt.addEventListener('click', toggle_collapse);
+
+    const update_button_elt = makeUpdateButton(obj.id, details_elt);
+    content_elt.appendChild(update_button_elt);
 
     const delete_button_elt = makeDeleteButton(obj.id, context['the-list'], li_elt);
     content_elt.appendChild(delete_button_elt);
 
     return li_elt;
+}
+
+function makeUpdateButton(id, textbox) {
+    const button_elt = makeElt("input", "button");
+    button_elt.setAttribute('type', 'button');
+    button_elt.setAttribute('value', 'Update');
+
+    function update_item(event) {
+        persistence_update_by_id(id, textbox.value);
+    }
+
+    button_elt.addEventListener('click', update_item);
+    return button_elt;
 }
 
 function makeDeleteButton(id, parent, child) {
@@ -170,7 +188,7 @@ function persistence_save() {
 }
 
 function persistence_load(text) {
-    console.log(text)
+//    console.log(text);
     try {
         context['persistent_array'] = JSON.parse(text);
     }
@@ -184,5 +202,11 @@ function persistence_clear() {
 
 function persistence_delete_by_id(id) {
     context['persistent_array'] = context['persistent_array'].filter(obj => obj.id !== id);
+    persistence_save();
+}
+
+function persistence_update_by_id(id, text) {
+    const index = context['persistent_array'].findIndex(obj => obj.id == id);
+    context['persistent_array'][index].details = text;
     persistence_save();
 }

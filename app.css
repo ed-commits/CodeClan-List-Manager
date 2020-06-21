@@ -19,6 +19,8 @@ input.button {
     border: 2px solid #653E7A;
     border-radius: 12px;
     padding: 4px 40px;
+    margin-left: 12px;
+    margin-right: 12px;
 }
 
 input.button:hover {
@@ -26,8 +28,11 @@ input.button:hover {
     color: white;
 }
 
-pre {
+textarea.details {
     font: 1em "Fira Sans", sans-serif;
+    display: block;
+    border: none;
+    margin: 10px;
 }
 
 /* GRID form from S.O. */
