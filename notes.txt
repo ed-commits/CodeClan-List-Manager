@@ -1,4 +1,2 @@
 the form "required" stuff does not seem to work.
-it let's me submit an empty form.
-
-collapse triggers disappear on page reload
+it lets me submit an empty form.
