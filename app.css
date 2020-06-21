@@ -26,6 +26,10 @@ input.button:hover {
     color: white;
 }
 
+pre {
+    font: 1em "Fira Sans", sans-serif;
+}
+
 /* GRID form from S.O. */
 
 form {}
@@ -43,7 +47,7 @@ div.container {
     padding 2em;
     margin: 2em;
     background-color: #EEC4E8;
-    /* https://www.cssmatic.com/box-shadow */
+    /* used https://www.cssmatic.com/box-shadow to create these parameters */
     box-shadow: 12px 12px 30px 0px rgb(106, 120, 131);
 }
 
@@ -72,7 +76,6 @@ li {
 }
 
 /* from w3schools */
-
 .collapsible {
     background-color: #653E7A;
     color: white;
@@ -83,7 +86,7 @@ li {
     text-align: left;
     outline: none;
     width: 320px;
-    overflow:hidden;
+    overflow: hidden;
     text-overflow: ellipsis;
     font: 1.2em "Fira Sans", sans-serif;
 }

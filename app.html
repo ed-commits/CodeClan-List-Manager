@@ -19,19 +19,19 @@
         <form id="the-form" action="#">
             <div class="form">
                 <label for="title" class="primary">Title</label>
-                <input type="text" id="title" required />
+                <input type="text" id="input-title" required />
 
                 <label for="details">Details</label>
-                <textarea id="details" name="details" rows="6" cols="50" required></textarea>
+                <textarea id="input-details" name="details" rows="6" cols="50" required></textarea>
                 <div></div>
-                <input class="button" type="submit" id="submit" value="Submit">
+                <input class="button" type="submit" id="submit-button" value="Submit">
             </div>
         </form>
     </div>
     <div class="container">
         <div class="button-spacing">
-            <input class="button" type="button" id="open-all" value="Open All">
-            <input class="button" type="button" id="close-all" value="Close All">
+            <input class="button" type="button" id="open-all-button" value="Open All">
+            <input class="button" type="button" id="close-all-button" value="Close All">
         </div>
     </div>
     <div class="container">
@@ -41,13 +41,15 @@
     </div>
     <div class="container">
         <div class="button-spacing">
-            <input class="button" type="button" id="clear" value="Clear!">
-            <input class="button" type="button" id="export" value="Export">
+            <input class="button" type="button" id="clear-button" value="Clear!">
+            <input class="button" type="button" id="export-button" value="Export">
             <hr />
-            (not functional)
             <form method="post">
+                <!--
                 <input type="file" id="my-file" name="filename">
-                <input class="button" type="button" id="export" value="Upload">
+                -->
+                <textarea id="upload-box" name="upload" rows="6" cols="50"></textarea>
+                <input class="button" type="button" id="upload-button" value="Upload">
             </form>
         </div>
     </div>

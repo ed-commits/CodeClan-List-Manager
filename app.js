@@ -1,45 +1,32 @@
 let context = {};
 
 document.addEventListener('DOMContentLoaded', () => {
-    const the_form = document.querySelector('#the-form');
-    const input_title = document.querySelector('#title');
-    const input_details = document.querySelector('#details');
-    const button = document.querySelector('#submit');
-    const clear_button = document.querySelector('#clear');
-    const export_button = document.querySelector('#export');
-    const openall_button = document.querySelector('#open-all');
-    const closeall_button = document.querySelector('#close-all');
-    const the_list = document.querySelector('#the-list');
-
-    if (the_form == null) { console.error("Error: the_form is null!"); }
-    if (input_title == null) { console.error("Error: input_title is null!"); }
-    if (input_details == null) { console.error("Error: input_details is null!"); }
-    if (button == null) { console.error("Error: button is null!"); }
-    if (clear_button == null) { console.error("Error: clear_button is null!"); }
-    if (export_button == null) { console.error("Error: clear_button is null!"); }
-    if (the_list == null) { console.error("Error: the_list is null!"); }
-
-    context = {
-        the_form: the_form,
-        input_title: input_title,
-        input_details: input_details,
-        the_list: the_list,
-        persistent_array: []
-    };
+    const element_names = [
+        'the-form', 'input-title', 'input-details',
+        'submit-button', 'clear-button', 'export-button',
+        'open-all-button', 'close-all-button',
+        'upload-button', 'upload-box', 'the-list'
+    ];
+    element_names.forEach(function (name) {
+        result = document.querySelector('#' + name)
+        if (result == null) { console.error(`Error: ${name} is null!`); }
+        context[name] = result;
+    });
 
     persistence_setup_array();
     build_out_array();
 
-    button.addEventListener('click', click);
-    clear_button.addEventListener('click', clear);
-    export_button.addEventListener('click', export_it);
-    openall_button.addEventListener('click', open_all);
-    closeall_button.addEventListener('click', close_all);
+    context['submit-button'].addEventListener('click', click);
+    context['clear-button'].addEventListener('click', clear);
+    context['export-button'].addEventListener('click', export_it);
+    context['open-all-button'].addEventListener('click', open_all);
+    context['close-all-button'].addEventListener('click', close_all);
+    context['upload-button'].addEventListener('click', handle_upload);
 });
 
 function build_out_array() {
-    for (let obj of context.persistent_array) {
-        context.the_list.prepend(objectToHTMLElement(obj));
+    for (let obj of context['persistent_array']) {
+        context['the-list'].prepend(objectToHTMLElement(obj));
     }
 }
 
@@ -48,32 +35,32 @@ function build_out_array() {
 function click(event) {
     event.preventDefault();
 
-    const title = context.input_title.value;
-    const details = context.input_details.value;
-    context.the_form.reset();
+    const title = context['input-title'].value;
+    const details = context['input-details'].value;
+    context['the-form'].reset();
 
     const obj = {
-        id: context.persistent_array.length,
+        id: context['persistent_array'].length,
         title: title,
         details: details,
         date: new Date()
     };
     //console.dir(obj);
 
-    context.persistent_array.push(obj);
+    context['persistent_array'].push(obj);
     persistence_save();
 
     const elt = objectToHTMLElement(obj);
-    context.the_list.prepend(elt);
+    context['the-list'].prepend(elt);
 }
 
 function clear(event) {
-    context.the_list.innerHTML = null;
+    context['the-list'].innerHTML = null;
     persistence_clear();
 }
 
 function export_it(event) {
-    downloadObjectAsJson(context.persistent_array, "my-list");
+    downloadObjectAsJson(context['persistent_array'], "my-list");
 }
 
 function open_all(event) {
@@ -84,6 +71,13 @@ function open_all(event) {
 function close_all(event) {
     const buttons = document.querySelectorAll('button.collapsible.active');
     buttons.forEach(button => button.click());
+}
+
+function handle_upload(event) {
+    persistence_load(context['upload-box'].value);
+    persistence_save();
+    context['the-list'].innerHTML = null;
+    build_out_array();
 }
 
 ///////////////
@@ -100,16 +94,14 @@ function downloadObjectAsJson(exportObj, exportName) {
 }
 
 // https://www.w3schools.com/howto/howto_js_collapsible.asp
-function toggle_collapse(context) {
-    return function (event) {
-        this.classList.toggle("active");
-        this.classList.toggle("inactive");
-        var content = this.nextElementSibling;
-        if (content.style.maxHeight) {
-            content.style.maxHeight = null;
-        } else {
-            content.style.maxHeight = content.scrollHeight + "px";
-        }
+function toggle_collapse(event) {
+    this.classList.toggle("active");
+    this.classList.toggle("inactive");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+    } else {
+        content.style.maxHeight = content.scrollHeight + "px";
     }
 }
 
@@ -130,18 +122,16 @@ function makeElt(tag, clss, text, parent) {
 function objectToHTMLElement(obj) {
     const li_elt = makeElt('li');
     li_elt.setAttribute('id', "li_" + obj.id);
+    
     const div_elt = makeElt('div', 'item', null, li_elt);
     const button_elt = makeElt('button', 'collapsible', obj.title, div_elt);
-    button_elt.classList.add('inactive');
     const content_elt = makeElt('div', 'content', null, div_elt);
-    const details_elt = makeElt('p', null, obj.details, content_elt);
+    const details_elt = makeElt('pre', null, obj.details, content_elt);
 
-    const toggle_context = {
-        content: content_elt
-    };
-    button_elt.addEventListener('click', toggle_collapse(toggle_context));
+    button_elt.classList.add('inactive');
+    button_elt.addEventListener('click', toggle_collapse);
 
-    const delete_button_elt = makeDeleteButton(obj.id, context.the_list, li_elt);
+    const delete_button_elt = makeDeleteButton(obj.id, context['the-list'], li_elt);
     content_elt.appendChild(delete_button_elt);
 
     return li_elt;
@@ -152,18 +142,13 @@ function makeDeleteButton(id, parent, child) {
     const button_elt = makeElt("input", "button");
     button_elt.setAttribute('type', 'button');
     button_elt.setAttribute('value', 'Delete');
-    const context = {
-        id: id,
-        parent: parent,
-        child: child
-    };
 
-    function delete_item() {
+    function delete_item(event) {
         // delete by id from the array
-        persistence_delete_by_id(context.id);
+        persistence_delete_by_id(id);
 
         // delete the HTML element too
-        context.parent.removeChild(context.child);
+        parent.removeChild(child);
     }
 
     button_elt.addEventListener('click', delete_item);
@@ -174,26 +159,30 @@ function makeDeleteButton(id, parent, child) {
 // persistence of the list
 
 function persistence_setup_array() {
-    context.persistent_array = [];
+    context['persistent_array'] = [];
     if (localStorage.persistent_array !== null) {
-        try {
-            context.persistent_array = JSON.parse(localStorage.persistent_array);
-        }
-        catch (error) { }
+        persistence_load(localStorage.persistent_array);
     }
 }
 
 function persistence_save() {
-    localStorage.persistent_array = JSON.stringify(context.persistent_array);
+    localStorage.persistent_array = JSON.stringify(context['persistent_array']);
+}
+
+function persistence_load(text) {
+    console.log(text)
+    try {
+        context['persistent_array'] = JSON.parse(text);
+    }
+    catch (error) { }
 }
 
 function persistence_clear() {
-    context.persistent_array = [];
+    context['persistent_array'] = [];
     localStorage.removeItem('persistent_array');
 }
 
 function persistence_delete_by_id(id) {
-    context.persistent_array = context.persistent_array.filter(obj => obj.id !== id);
+    context['persistent_array'] = context['persistent_array'].filter(obj => obj.id !== id);
     persistence_save();
 }
-
