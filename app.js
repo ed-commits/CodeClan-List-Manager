@@ -42,18 +42,18 @@ function click(event) {
     //console.dir(obj);
 
     this.persist.persistent_array.push(obj);
-    this.persist.persistence_save();
+    this.persist.save();
     const elt = this.app.objectToHTMLElement(obj);
     this['the-list'].prepend(elt);
 }
 
 function clear(event) {
     this['the-list'].innerHTML = null;
-    this.persist.persistence_clear();
+    this.persist.clear();
 }
 
 function export_it(event) {
-    downloadObjectAsJson(this['persistent_array'], "my-list");
+    downloadObjectAsJson(this.persist.persistent_array, "my-list");
 }
 
 function open_all(event) {
@@ -67,8 +67,8 @@ function close_all(event) {
 }
 
 function handle_upload(event) {
-    this.persist.persistence_load(this['upload-box'].value);
-    this.persist.persistence_save();
+    this.persist.load(this['upload-box'].value);
+    this.persist.save();
     this['the-list'].innerHTML = null;
     this.app.build_out_array();
 }
@@ -110,7 +110,7 @@ App.prototype.build_out_array = function() {
     }
 }
 
-App.prototype.makeElt = function(tag, clss, text, parent) {
+App.prototype.make_elt = function(tag, clss, text, parent) {
     const elt = document.createElement(tag);
     if (!(clss == null)) {
         elt.classList.add(clss);
@@ -123,50 +123,50 @@ App.prototype.makeElt = function(tag, clss, text, parent) {
 }
 
 App.prototype.objectToHTMLElement = function(obj) {
-    const li_elt = this.makeElt('li');
+    const li_elt = this.make_elt('li');
     li_elt.setAttribute('id', "li_" + obj.id);
     
-    const div_elt = this.makeElt('div', 'item', null, li_elt);
-    const button_elt = this.makeElt('button', 'collapsible', obj.title, div_elt);
-    const content_elt = this.makeElt('div', 'content', null, div_elt);
-    const details_elt = this.makeElt('textarea', 'details', obj.details, content_elt);
+    const div_elt = this.make_elt('div', 'item', null, li_elt);
+    const button_elt = this.make_elt('button', 'collapsible', obj.title, div_elt);
+    const content_elt = this.make_elt('div', 'content', null, div_elt);
+    const details_elt = this.make_elt('textarea', 'details', obj.details, content_elt);
     details_elt.setAttribute('rows', 15);
     details_elt.setAttribute('cols', 35);
 
     button_elt.classList.add('inactive');
     button_elt.addEventListener('click', toggle_collapse);
 
-    const update_button_elt = this.makeUpdateButton(obj.id, details_elt);
+    const update_button_elt = this.make_update_button(obj.id, details_elt);
     content_elt.appendChild(update_button_elt);
 
-    const delete_button_elt = this.makeDeleteButton(obj.id, this.context['the-list'], li_elt);
+    const delete_button_elt = this.make_delete_button(obj.id, this.context['the-list'], li_elt);
     content_elt.appendChild(delete_button_elt);
 
     return li_elt;
 }
 
-App.prototype.makeUpdateButton = function(id, textbox) {
-    const button_elt = this.makeElt("input", "button");
+App.prototype.make_update_button = function(id, textbox) {
+    const button_elt = this.make_elt("input", "button");
     button_elt.setAttribute('type', 'button');
     button_elt.setAttribute('value', 'Update');
 
     function update_item(event) {
-        this.context.persist.persistence_update_by_id(id, textbox.value);
+        this.context.persist.update_by_id(id, textbox.value);
     }
 
     button_elt.addEventListener('click', update_item.bind(this));
     return button_elt;
 }
 
-App.prototype.makeDeleteButton = function(id, parent, child) {
+App.prototype.make_delete_button = function(id, parent, child) {
     // <input class="button" type="button" id="export" value="Export">
-    const button_elt = this.makeElt("input", "button");
+    const button_elt = this.make_elt("input", "button");
     button_elt.setAttribute('type', 'button');
     button_elt.setAttribute('value', 'Delete');
 
     function delete_item(event) {
         // delete by id from the array
-        this.context.persist.persistence_delete_by_id(id);
+        this.context.persist.delete_by_id(id);
 
         // delete the HTML element too
         parent.removeChild(child);
@@ -182,15 +182,15 @@ App.prototype.makeDeleteButton = function(id, parent, child) {
 const Persistence = function () {
     this.persistent_array = [];
     if (localStorage.persistent_array !== null) {
-        this.persistence_load(localStorage.persistent_array);
+        this.load(localStorage.persistent_array);
     }
 }
 
-Persistence.prototype.persistence_save = function() {
+Persistence.prototype.save = function() {
     localStorage.persistent_array = JSON.stringify(this.persistent_array);
 }
 
-Persistence.prototype.persistence_load = function(text) {
+Persistence.prototype.load = function(text) {
 //    console.log(text);
     try {
         this.persistent_array = JSON.parse(text);
@@ -198,18 +198,18 @@ Persistence.prototype.persistence_load = function(text) {
     catch (error) { }
 }
 
-Persistence.prototype.persistence_clear = function() {
+Persistence.prototype.clear = function() {
     this.persistent_array = [];
     localStorage.removeItem('persistent_array');
 }
 
-Persistence.prototype.persistence_delete_by_id = function(id) {
+Persistence.prototype.delete_by_id = function(id) {
     this.persistent_array = this.persistent_array.filter(obj => obj.id !== id);
-    this.persistence_save();
+    this.save();
 }
 
-Persistence.prototype.persistence_update_by_id = function(id, text) {
+Persistence.prototype.update_by_id = function(id, text) {
     const index = this.persistent_array.findIndex(obj => obj.id == id);
     this.persistent_array[index].details = text;
-    this.persistence_save();
+    this.save();
 }
