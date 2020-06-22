@@ -1,6 +1,5 @@
-let context = {};
-
 document.addEventListener('DOMContentLoaded', () => {
+    let context = {};
     const element_names = [
         'the-form', 'input-title', 'input-details',
         'submit-button', 'clear-button', 'export-button',
@@ -13,54 +12,48 @@ document.addEventListener('DOMContentLoaded', () => {
         context[name] = result;
     });
 
-    persistence_setup_array();
-    build_out_array();
+    context.persist = new Persistence();
+    context.app = new App(context);
+    context.app.build_out_array();
 
-    context['submit-button'].addEventListener('click', click);
-    context['clear-button'].addEventListener('click', clear);
-    context['export-button'].addEventListener('click', export_it);
-    context['open-all-button'].addEventListener('click', open_all);
-    context['close-all-button'].addEventListener('click', close_all);
-    context['upload-button'].addEventListener('click', handle_upload);
+    context['submit-button'].addEventListener('click', click.bind(context));
+    context['clear-button'].addEventListener('click', clear.bind(context));
+    context['export-button'].addEventListener('click', export_it.bind(context));
+    context['open-all-button'].addEventListener('click', open_all.bind(context));
+    context['close-all-button'].addEventListener('click', close_all.bind(context));
+    context['upload-button'].addEventListener('click', handle_upload.bind(context));
 });
-
-function build_out_array() {
-    for (let obj of context['persistent_array']) {
-        context['the-list'].prepend(objectToHTMLElement(obj));
-    }
-}
 
 /////// Button code
 
 function click(event) {
     event.preventDefault();
 
-    const title = context['input-title'].value;
-    const details = context['input-details'].value;
-    context['the-form'].reset();
+    const title = this['input-title'].value;
+    const details = this['input-details'].value;
+    this['the-form'].reset();
 
     const obj = {
-        id: context['persistent_array'].length,
+        id: this.persist.persistent_array.length,
         title: title,
         details: details,
         date: new Date()
     };
     //console.dir(obj);
 
-    context['persistent_array'].push(obj);
-    persistence_save();
-
-    const elt = objectToHTMLElement(obj);
-    context['the-list'].prepend(elt);
+    this.persist.persistent_array.push(obj);
+    this.persist.persistence_save();
+    const elt = this.app.objectToHTMLElement(obj);
+    this['the-list'].prepend(elt);
 }
 
 function clear(event) {
-    context['the-list'].innerHTML = null;
-    persistence_clear();
+    this['the-list'].innerHTML = null;
+    this.persist.persistence_clear();
 }
 
 function export_it(event) {
-    downloadObjectAsJson(context['persistent_array'], "my-list");
+    downloadObjectAsJson(this['persistent_array'], "my-list");
 }
 
 function open_all(event) {
@@ -74,10 +67,10 @@ function close_all(event) {
 }
 
 function handle_upload(event) {
-    persistence_load(context['upload-box'].value);
-    persistence_save();
-    context['the-list'].innerHTML = null;
-    build_out_array();
+    this.persist.persistence_load(this['upload-box'].value);
+    this.persist.persistence_save();
+    this['the-list'].innerHTML = null;
+    this.app.build_out_array();
 }
 
 ///////////////
@@ -107,7 +100,17 @@ function toggle_collapse(event) {
 
 //////////////////////
 
-function makeElt(tag, clss, text, parent) {
+const App = function (context) {
+    this.context = context;
+}
+
+App.prototype.build_out_array = function() {
+    for (let obj of this.context.persist.persistent_array) {
+        this.context['the-list'].prepend(this.objectToHTMLElement(obj));
+    }
+}
+
+App.prototype.makeElt = function(tag, clss, text, parent) {
     const elt = document.createElement(tag);
     if (!(clss == null)) {
         elt.classList.add(clss);
@@ -119,94 +122,94 @@ function makeElt(tag, clss, text, parent) {
     return elt;
 }
 
-function objectToHTMLElement(obj) {
-    const li_elt = makeElt('li');
+App.prototype.objectToHTMLElement = function(obj) {
+    const li_elt = this.makeElt('li');
     li_elt.setAttribute('id', "li_" + obj.id);
     
-    const div_elt = makeElt('div', 'item', null, li_elt);
-    const button_elt = makeElt('button', 'collapsible', obj.title, div_elt);
-    const content_elt = makeElt('div', 'content', null, div_elt);
-    const details_elt = makeElt('textarea', 'details', obj.details, content_elt);
+    const div_elt = this.makeElt('div', 'item', null, li_elt);
+    const button_elt = this.makeElt('button', 'collapsible', obj.title, div_elt);
+    const content_elt = this.makeElt('div', 'content', null, div_elt);
+    const details_elt = this.makeElt('textarea', 'details', obj.details, content_elt);
     details_elt.setAttribute('rows', 15);
     details_elt.setAttribute('cols', 35);
 
     button_elt.classList.add('inactive');
     button_elt.addEventListener('click', toggle_collapse);
 
-    const update_button_elt = makeUpdateButton(obj.id, details_elt);
+    const update_button_elt = this.makeUpdateButton(obj.id, details_elt);
     content_elt.appendChild(update_button_elt);
 
-    const delete_button_elt = makeDeleteButton(obj.id, context['the-list'], li_elt);
+    const delete_button_elt = this.makeDeleteButton(obj.id, this.context['the-list'], li_elt);
     content_elt.appendChild(delete_button_elt);
 
     return li_elt;
 }
 
-function makeUpdateButton(id, textbox) {
-    const button_elt = makeElt("input", "button");
+App.prototype.makeUpdateButton = function(id, textbox) {
+    const button_elt = this.makeElt("input", "button");
     button_elt.setAttribute('type', 'button');
     button_elt.setAttribute('value', 'Update');
 
     function update_item(event) {
-        persistence_update_by_id(id, textbox.value);
+        this.context.persist.persistence_update_by_id(id, textbox.value);
     }
 
-    button_elt.addEventListener('click', update_item);
+    button_elt.addEventListener('click', update_item.bind(this));
     return button_elt;
 }
 
-function makeDeleteButton(id, parent, child) {
+App.prototype.makeDeleteButton = function(id, parent, child) {
     // <input class="button" type="button" id="export" value="Export">
-    const button_elt = makeElt("input", "button");
+    const button_elt = this.makeElt("input", "button");
     button_elt.setAttribute('type', 'button');
     button_elt.setAttribute('value', 'Delete');
 
     function delete_item(event) {
         // delete by id from the array
-        persistence_delete_by_id(id);
+        this.context.persist.persistence_delete_by_id(id);
 
         // delete the HTML element too
         parent.removeChild(child);
     }
 
-    button_elt.addEventListener('click', delete_item);
+    button_elt.addEventListener('click', delete_item.bind(this));
     return button_elt;
 }
 
 
 // persistence of the list
 
-function persistence_setup_array() {
-    context['persistent_array'] = [];
+const Persistence = function () {
+    this.persistent_array = [];
     if (localStorage.persistent_array !== null) {
-        persistence_load(localStorage.persistent_array);
+        this.persistence_load(localStorage.persistent_array);
     }
 }
 
-function persistence_save() {
-    localStorage.persistent_array = JSON.stringify(context['persistent_array']);
+Persistence.prototype.persistence_save = function() {
+    localStorage.persistent_array = JSON.stringify(this.persistent_array);
 }
 
-function persistence_load(text) {
+Persistence.prototype.persistence_load = function(text) {
 //    console.log(text);
     try {
-        context['persistent_array'] = JSON.parse(text);
+        this.persistent_array = JSON.parse(text);
     }
     catch (error) { }
 }
 
-function persistence_clear() {
-    context['persistent_array'] = [];
+Persistence.prototype.persistence_clear = function() {
+    this.persistent_array = [];
     localStorage.removeItem('persistent_array');
 }
 
-function persistence_delete_by_id(id) {
-    context['persistent_array'] = context['persistent_array'].filter(obj => obj.id !== id);
-    persistence_save();
+Persistence.prototype.persistence_delete_by_id = function(id) {
+    this.persistent_array = this.persistent_array.filter(obj => obj.id !== id);
+    this.persistence_save();
 }
 
-function persistence_update_by_id(id, text) {
-    const index = context['persistent_array'].findIndex(obj => obj.id == id);
-    context['persistent_array'][index].details = text;
-    persistence_save();
+Persistence.prototype.persistence_update_by_id = function(id, text) {
+    const index = this.persistent_array.findIndex(obj => obj.id == id);
+    this.persistent_array[index].details = text;
+    this.persistence_save();
 }
