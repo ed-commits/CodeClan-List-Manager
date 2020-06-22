@@ -34,14 +34,14 @@ function click(event) {
     this['the-form'].reset();
 
     const obj = {
-        id: this.persist.persistent_array.length,
+        id: this.persist.array.length,
         title: title,
         details: details,
         date: new Date()
     };
     //console.dir(obj);
 
-    this.persist.persistent_array.push(obj);
+    this.persist.array.push(obj);
     this.persist.save();
     const elt = this.app.objectToHTMLElement(obj);
     this['the-list'].prepend(elt);
@@ -53,7 +53,7 @@ function clear(event) {
 }
 
 function export_it(event) {
-    downloadObjectAsJson(this.persist.persistent_array, "my-list");
+    downloadObjectAsJson(this.persist.array, "my-list");
 }
 
 function open_all(event) {
@@ -105,7 +105,7 @@ const App = function (context) {
 }
 
 App.prototype.build_out_array = function() {
-    for (let obj of this.context.persist.persistent_array) {
+    for (let obj of this.context.persist.array) {
         this.context['the-list'].prepend(this.objectToHTMLElement(obj));
     }
 }
@@ -180,36 +180,36 @@ App.prototype.make_delete_button = function(id, parent, child) {
 // persistence of the list
 
 const Persistence = function () {
-    this.persistent_array = [];
-    if (localStorage.persistent_array !== null) {
-        this.load(localStorage.persistent_array);
+    this.array = [];
+    if (localStorage.array !== null) {
+        this.load(localStorage.array);
     }
 }
 
 Persistence.prototype.save = function() {
-    localStorage.persistent_array = JSON.stringify(this.persistent_array);
+    localStorage.array = JSON.stringify(this.array);
 }
 
 Persistence.prototype.load = function(text) {
 //    console.log(text);
     try {
-        this.persistent_array = JSON.parse(text);
+        this.array = JSON.parse(text);
     }
     catch (error) { }
 }
 
 Persistence.prototype.clear = function() {
-    this.persistent_array = [];
+    this.array = [];
     localStorage.removeItem('persistent_array');
 }
 
 Persistence.prototype.delete_by_id = function(id) {
-    this.persistent_array = this.persistent_array.filter(obj => obj.id !== id);
+    this.array = this.array.filter(obj => obj.id !== id);
     this.save();
 }
 
 Persistence.prototype.update_by_id = function(id, text) {
-    const index = this.persistent_array.findIndex(obj => obj.id == id);
-    this.persistent_array[index].details = text;
+    const index = this.array.findIndex(obj => obj.id == id);
+    this.array[index].details = text;
     this.save();
 }
