@@ -200,7 +200,7 @@ Persistence.prototype.load = function(text) {
 
 Persistence.prototype.clear = function() {
     this.array = [];
-    localStorage.removeItem('persistent_array');
+    localStorage.removeItem('array');
 }
 
 Persistence.prototype.delete_by_id = function(id) {
