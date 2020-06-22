@@ -4,10 +4,10 @@ const Persistence = require('./persistence.js');
 document.addEventListener('DOMContentLoaded', () => {
     let context = {};
     const element_names = [
-        'the-form', 'input-title', 'input-details',
-        'submit-button', 'clear-button', 'export-button',
-        'open-all-button', 'close-all-button',
-        'upload-button', 'upload-box', 'the-list'
+        'the_form', 'input_title', 'input_details',
+        'submit_button', 'clear_button', 'export_button',
+        'open_all_button', 'close_all_button',
+        'upload_button', 'upload_box', 'the_list'
     ];
     element_names.forEach(function (name) {
         result = document.querySelector('#' + name)
@@ -19,12 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
     context.app = new App(context);
     context.app.build_out_array();
 
-    context['submit-button'].addEventListener('click', click.bind(context));
-    context['clear-button'].addEventListener('click', clear.bind(context));
-    context['export-button'].addEventListener('click', export_it.bind(context));
-    context['open-all-button'].addEventListener('click', open_all.bind(context));
-    context['close-all-button'].addEventListener('click', close_all.bind(context));
-    context['upload-button'].addEventListener('click', handle_upload.bind(context));
+    context.submit_button.addEventListener('click', click.bind(context));
+    context.clear_button.addEventListener('click', clear.bind(context));
+    context.export_button.addEventListener('click', export_it.bind(context));
+    context.open_all_button.addEventListener('click', open_all.bind(context));
+    context.close_all_button.addEventListener('click', close_all.bind(context));
+    context.upload_button.addEventListener('click', handle_upload.bind(context));
 });
 
 /////// Button code
@@ -32,9 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function click(event) {
     event.preventDefault();
 
-    const title = this['input-title'].value;
-    const details = this['input-details'].value;
-    this['the-form'].reset();
+    const title = this.input_title.value;
+    const details = this.input_details.value;
+    this.the_form.reset();
 
     const obj = {
         id: this.persist.array.length,
@@ -47,16 +47,16 @@ function click(event) {
     this.persist.array.push(obj);
     this.persist.save();
     const elt = this.app.objectToHTMLElement(obj);
-    this['the-list'].prepend(elt);
+    this.the_list.prepend(elt);
 }
 
 function clear(event) {
-    this['the-list'].innerHTML = null;
+    this.the_list.innerHTML = null;
     this.persist.clear();
 }
 
 function export_it(event) {
-    downloadObjectAsJson(this.persist.array, "my-list");
+    downloadObjectAsJson(this.persist.array, "my_list");
 }
 
 function open_all(event) {
@@ -70,9 +70,9 @@ function close_all(event) {
 }
 
 function handle_upload(event) {
-    this.persist.load(this['upload-box'].value);
+    this.persist.load(this.upload_box.value);
     this.persist.save();
-    this['the-list'].innerHTML = null;
+    this.the_list.innerHTML = null;
     this.app.build_out_array();
 }
 

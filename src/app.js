@@ -4,7 +4,7 @@ const App = function (context) {
 
 App.prototype.build_out_array = function() {
     for (let obj of this.context.persist.array) {
-        this.context['the-list'].prepend(this.objectToHTMLElement(obj));
+        this.context.the_list.prepend(this.objectToHTMLElement(obj));
     }
 }
 
@@ -37,7 +37,7 @@ App.prototype.objectToHTMLElement = function(obj) {
     const update_button_elt = this.make_update_button(obj.id, details_elt);
     content_elt.appendChild(update_button_elt);
 
-    const delete_button_elt = this.make_delete_button(obj.id, this.context['the-list'], li_elt);
+    const delete_button_elt = this.make_delete_button(obj.id, this.context.the_list, li_elt);
     content_elt.appendChild(delete_button_elt);
 
     return li_elt;
