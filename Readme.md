@@ -1,1 +1,3 @@
-![GitHub Logo](/list manager screenshot.png)
+# List Manager
+
+![Screenshot](list%20manager%20screenshot.png)
